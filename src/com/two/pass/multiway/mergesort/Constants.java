@@ -8,7 +8,7 @@ public class Constants {
 	public static final int MEMORY_SIZE = (TOTAL_MEMORY / BLOCK_SIZE) * BLOCK_SIZE;
 	public static final int MAX_RECORD = 40;
 	public static final String INPUT_PATH = "./inputfiles/";
-	public static final String SUBLIST_PATH = "./sublists/";
+	public static final String BLOCK_PATH = "./blocks/";
 	public static final String OUTPUT_PATH = "./outputfiles/";
 	public static final String INPUT_FILE1 = "sample1.txt";
 	public static final String INPUT_FILE2 = "sample2.txt";

@@ -10,7 +10,6 @@ import java.util.ArrayList;
 public class PhaseTwo {
 	static long time = 0;
 	static int itertion = 0;
-	private static int maximum_record = 40;
 
 	public static String mergeSort(ArrayList<String> sublist) {
 		long itertionStart = System.currentTimeMillis();
@@ -20,9 +19,9 @@ public class PhaseTwo {
 		int read2 = 0;
 		int write = 0;
 		for (int k = 0; k < sublist.size(); k = k + 2) {
-			String list12 = System.getProperty("user.dir") + System.getProperty("file.separator") + "buffer"
+			String list12 = System.getProperty("user.dir") + System.getProperty("file.separator") + "blocks"
 					+ System.getProperty("file.separator") + itertion + "-sublist-" + k + "_" + (k + 1);
-
+			System.out.println(list12);
 			try {
 				BufferedReader out1 = new BufferedReader(new FileReader(sublist.get(k)));
 				BufferedReader out2 = null;
@@ -39,8 +38,8 @@ public class PhaseTwo {
 
 						if (record1 == null) {
 							record1 = out1.readLine();
-							if (read1 == maximum_record && record1 != null) {
-								++PhaseOne.icount;
+							if (read1 == Constants.MAX_RECORD && record1 != null) {
+								++PhaseOne.inputCount;
 								read1 = 0;
 							}
 
@@ -49,8 +48,8 @@ public class PhaseTwo {
 						}
 						if (record2 == null) {
 							record2 = out2.readLine();
-							if (read2 == maximum_record && record2 != null) {
-								++PhaseOne.icount;
+							if (read2 == Constants.MAX_RECORD && record2 != null) {
+								++PhaseOne.outputCount;
 								read1 = 0;
 							}
 
@@ -90,8 +89,8 @@ public class PhaseTwo {
 							}
 						}
 
-						if (write == maximum_record) {
-							++PhaseOne.ocount;
+						if (write == Constants.MAX_RECORD) {
+							++PhaseOne.outputCount;
 							write = 0;
 						}
 						bw.newLine();
@@ -102,8 +101,8 @@ public class PhaseTwo {
 					while ((record1 = out1.readLine()) != null) {
 						bw.write(record1);
 						++write;
-						if (write == maximum_record) {
-							++PhaseOne.ocount;
+						if (write == Constants.MAX_RECORD) {
+							++PhaseOne.outputCount;
 							write = 0;
 						}
 						bw.newLine();
@@ -115,7 +114,6 @@ public class PhaseTwo {
 				mergedFiles.add(list12);
 
 				out1.close();
-				// out2.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -126,10 +124,8 @@ public class PhaseTwo {
 				+ (System.currentTimeMillis() - itertionStart) / 1000.0 + "sec)");
 		for (String f : sublist) {
 			File buff = new File(f);
-
 			boolean b = buff.delete();
 		}
-
 		if (mergedFiles.size() > 1) {
 			itertion++;
 			return mergeSort(mergedFiles);
