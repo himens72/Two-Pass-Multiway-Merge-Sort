@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 public class PhaseTwo {
 	static long time = 0;
@@ -15,7 +14,6 @@ public class PhaseTwo {
 
 	public static String mergeSort(ArrayList<String> sublist) {
 		long itertionStart = System.currentTimeMillis();
-
 		ArrayList<String> mergedFiles = new ArrayList<String>();
 		System.lineSeparator();
 		int read1 = 0;
@@ -130,7 +128,6 @@ public class PhaseTwo {
 			File buff = new File(f);
 
 			boolean b = buff.delete();
-			// System.out.println(f+"deleted"+b);
 		}
 
 		if (mergedFiles.size() > 1) {

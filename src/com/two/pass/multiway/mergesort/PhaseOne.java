@@ -19,14 +19,14 @@ import org.apache.commons.io.FileUtils;
 public class PhaseOne {
 	static int icount = 0;
 	static int ocount = 0;
-	private static int maximum_record = 160;
+	private static int maximum_record = 40;
 	private static int record_count;
 	private static int no_of_sublist;
 	File buffer = null;
 	File buffer1 = null;
 	File buffer2 = null;
 	long sortTime = 0;
-
+	int currentBlock  = 0;
 	public PhaseOne() {
 		buffer1 = new File(System.getProperty("user.dir") + "/buffer1");
 		buffer2 = new File(System.getProperty("user.dir") + "/buffer2");
@@ -52,13 +52,13 @@ public class PhaseOne {
 	}
 
 	private ArrayList<String> sortRecord(String loc, String relation) {
-		int i = 0;
+		if(relation.equals("T2"))
+			currentBlock++;
 		int data_count = 0;
 		ArrayList<String> tmp = new ArrayList<String>();
 		long begin = System.currentTimeMillis();
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(loc));
-
 			boolean run = true;
 			while (run) {
 				String record = null;
@@ -73,29 +73,25 @@ public class PhaseOne {
 						++icount;
 						++ocount;
 					}
-
 				}
-
 				Collections.sort(subList, new Comparator<String>() {
 					public int compare(String o1, String o2) {
 						return o1.substring(0, 18).compareTo(o2.substring(0, 18));
 					}
 				});
-
-				String outputFile = System.getProperty("user.dir") + "/buffer/sublist-" + i;
+				
+				String outputFile = System.getProperty("user.dir") + "/buffer/sublist-" + currentBlock;
 				BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
 				for (String s : subList) {
 					out.write(s);
 					out.newLine();
 				}
-
-				out.close();
-
+				out.close();			
 				tmp.add(outputFile);
 
 				if (record == null)
 					break;
-				i++;
+				currentBlock++;
 			}
 			// }
 			no_of_sublist = tmp.size();
@@ -115,12 +111,6 @@ public class PhaseOne {
 	}
 
 	private void emptyBufferBD1() {
-		// File buffer1 = new File(System.getProperty("user.dir") +
-		// "/buffer/bagdiffer1");
-//		if (buffer.isFile())
-//			buffer.delete();
-//			buffer.mkdir();
-//
 		if (!buffer1.exists()) {
 			buffer1.mkdir();
 		} else if (buffer1.isFile()) {
@@ -135,11 +125,6 @@ public class PhaseOne {
 	}
 
 	private void emptyBufferBD2() {
-//		File buffer2 = new File(System.getProperty("user.dir") + "/buffer/bagdiffer2");
-//		if (buffer.isFile())
-//			buffer.delete();
-//			buffer.mkdir();
-//
 		if (!buffer2.exists()) {
 			buffer2.mkdir();
 		} else if (buffer2.isFile()) {
@@ -153,30 +138,17 @@ public class PhaseOne {
 		}
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 		if ((args != null) && (args.length == 2)) {
 			PhaseOne tpmms = new PhaseOne();
 			tpmms.emptyBuffer();
 			ArrayList<String> T1 = tpmms.sortRecord(args[0], "T1");
 			// System.out.println("sorts the T1 separately");
 			// ArrayList<String> T1 = tpmms.sortRecord(args[0],"T1");
-			ArrayList<String> T = new ArrayList<String>();
-			try {
-
-				FileUtils.copyDirectory(tpmms.buffer, tpmms.buffer1, true);
-				File intermediate[] = tpmms.buffer1.listFiles();
-				for (File file : intermediate) {
-					if (file.isFile()) {
-						// System.out.println(file.getAbsolutePath());
-						Collections.addAll(T, file.getAbsolutePath());
-					}
-				}
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			System.out.println("Size T1 : "  +T1.size());
 			ArrayList<String> T2 = tpmms.sortRecord(args[1], "T2");
-			System.out.println("Total Time to sort the T1 and T2 is " + tpmms.sortTime + "ms " + "(" + "~approx "
+			System.out.println("Size T2 : "  +T2.size());
+			System.out.println("Totalllll Time to sort the T1 and T2 is " + tpmms.sortTime + "ms " + "(" + "~approx "
 					+ tpmms.sortTime / 1000.0 + "sec)");
 			System.out.println("Total number of records " + PhaseOne.record_count);
 			System.out.println("Number of sublist " + PhaseOne.no_of_sublist);
@@ -193,29 +165,6 @@ public class PhaseOne {
 			System.out.println("Input blocks : " + icount);
 			System.out.println("Output blocks : " + ocount);
 			System.out.println("Total no of input and output block for sorting" + (icount + ocount));
-			System.out.println("BagDifference Count starts!!");
-			long Bagstart = System.currentTimeMillis();
-			BagDiffernce.mergeSort(T, 0);
-
-			try {
-				tpmms.bagDifference();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			long BagStop = System.currentTimeMillis();
-			System.out.format("BagDiffernce time %d ms ~approx %f sec\n", BagStop - Bagstart,
-					(BagStop - Bagstart) / 1000.0);
-			// System.out.format("Total time %d ms \nm",((BagStop-Bagstart)+time));
-			System.out.format("Execution time for phase 1, phase2 and computing the bag difference is "
-					+ ((BagStop - Bagstart) + time + (tpmms.sortTime)) + " ms" + "(" + "~approx "
-					+ ((BagStop - Bagstart) + time + (tpmms.sortTime)) / 1000.0 + "sec)\n");
-			System.out.println("Total number of I/O's for sorting and computing the bag Difference");
-			System.out.println("Input blocks : " + icount);
-			System.out.println("Output blocks : " + ocount);
-			System.out.println("Total no of input and output block for sorting and computing the bag Difference "
-					+ (icount + ocount));
 		}
 	}
 
