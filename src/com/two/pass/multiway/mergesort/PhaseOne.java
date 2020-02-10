@@ -22,11 +22,27 @@ public class PhaseOne {
 	}
 
 	static int outputCount = 0;
-	static int record_count;
-	static int no_of_sublist;
+	static int recordCount;
+	public int getRecordCount() {
+		return recordCount;
+	}
+
+	public static void setRecordCount(int recordCount) {
+		PhaseOne.recordCount = recordCount;
+	}
+
+	static int blockCount;
 	File buffer = null;
 	long sortTime = 0;
 	int currentBlock  = 0;
+	public static int getBlockCount() {
+		return blockCount;
+	}
+
+	public static void setBlockCount(int blockCount) {
+		PhaseOne.blockCount = blockCount;
+	}
+
 	BufferedReader br;
 	
 	public int getOutputCount() {
@@ -45,37 +61,22 @@ public class PhaseOne {
 		this.currentBlock = currentBlock;
 	}
 
-	public void emptyBuffer() {
-		buffer = new File(Constants.BLOCK_PATH);
-		if (!buffer.exists()) {
-			buffer.mkdir();
-		} else if (buffer.isFile()) {
-			buffer.delete();
-			buffer.mkdir();
-		}
-		String intermediate[] = buffer.list();
-		for (String bufferLoctn : intermediate) {
-			File buff = new File(buffer.getPath(), bufferLoctn);
-			buff.delete();
-		}
-	}
-
 	public ArrayList<String> sortTuple(String tuple, String path) {
 		if(tuple.equals("T2"))
 			currentBlock++;
 		int data_count = 0;
-		ArrayList<String> tmp = new ArrayList<String>();
+		ArrayList<String> temp = new ArrayList<>();
 		long begin = System.currentTimeMillis();
 		try {
 			br = new BufferedReader(new FileReader(path));
 			boolean run = true;
 			while (run) {
 				String record = null;
-				ArrayList<String> subList = new ArrayList<String>();
+				ArrayList<String> subList = new ArrayList<>();
 
 				for (int k = 0; k < Constants.MAX_RECORD && (record = br.readLine()) != null; k++) {
 					subList.add(record);
-					record_count++;
+					recordCount++;
 					++data_count;
 					if (data_count == Constants.MAX_RECORD) {
 						data_count = 0;
@@ -96,53 +97,23 @@ public class PhaseOne {
 					out.newLine();
 				}
 				out.close();			
-				tmp.add(outputFile);
+				temp.add(outputFile);
 
 				if (record == null)
 					break;
 				currentBlock++;
 			}
-			no_of_sublist = tmp.size();
+			setBlockCount(temp.size());
 			sortTime = sortTime + (System.currentTimeMillis() - begin);
 			System.out.println("Time take to sort relation " + tuple + " is " + (System.currentTimeMillis() - begin)
 					+ "ms" + "(" + "~approx " + (System.currentTimeMillis() - begin) / 1000.0 + "sec)");
 		} catch (FileNotFoundException e) {
-			System.out.println("The file not found");
+			System.out.println("The File doesn't Exist : " + path);
 			System.exit(1);
-
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-
-		return tmp;
-	}
-	
-	public static void main(String[] args) throws InterruptedException {
-		if ((args != null) && (args.length == 2)) {
-			PhaseOne tpmms = new PhaseOne();
-			tpmms.emptyBuffer();
-			ArrayList<String> T1 = tpmms.sortTuple(args[0], "T1");
-			System.out.println("Size T1 : "  +T1.size());
-			ArrayList<String> T2 = tpmms.sortTuple(args[1], "T2");
-			System.out.println("Size T2 : "  +T2.size());
-			System.out.println("Totalllll Time to sort the T1 and T2 is " + tpmms.sortTime + "ms " + "(" + "~approx "
-					+ tpmms.sortTime / 1000.0 + "sec)");
-			System.out.println("Total number of records " + PhaseOne.record_count);
-			System.out.println("Number of sublist " + PhaseOne.no_of_sublist);
-			System.out.println("Total number of blocks used to store the Tuples is " + (PhaseOne.record_count / Constants.MAX_RECORD));
-			ArrayList<String> sortedSublist = new ArrayList<String>();
-			sortedSublist.addAll(T1);
-			sortedSublist.addAll(T2);
-			Long time = Long.parseLong(PhaseTwo.mergeSort(sortedSublist));
-			System.out
-					.println("Total Time taken to merge is " + time + "ms" + "(" + "~approx" + time / 1000.0 + "sec)");
-			System.out.println("Total time taken for phase 1 and Phase 2 is " + (time + tpmms.sortTime) + "ms" + "("
-					+ "~approx " + (time + tpmms.sortTime) / 1000.0 + "sec)");
-			System.out.println("Total number of I/O's for sorting");
-			System.out.println("Input blocks : " + inputCount);
-			System.out.println("Output blocks : " + outputCount);
-			System.out.println("Total no of input and output block for sorting" + (inputCount + outputCount));
-		}
+		return temp;
 	}
 }

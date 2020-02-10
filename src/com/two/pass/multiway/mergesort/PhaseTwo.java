@@ -11,17 +11,26 @@ import java.util.List;
 public class PhaseTwo {
 	static long time = 0;
 	static int itertion = 0;
-
+	static String currentMergeFile = "";
+	static List<String> listOfFiles;
+	public PhaseTwo(List<String> T1, List<String> T2) {
+		listOfFiles = new ArrayList<>();
+		listOfFiles.addAll(T1);
+		listOfFiles.addAll(T2);
+	}
+	
+	public String performMergeSort() {
+		return mergeSort(listOfFiles);
+	}
 	public static String mergeSort(List<String> blockList) {
 		long itertionStart = System.currentTimeMillis();
-		ArrayList<String> mergedFiles = new ArrayList<String>();
+		ArrayList<String> mergedFiles = new ArrayList<>();
 		System.lineSeparator();
 		int tupleCount1 = 0;
 		int tupleCount2 = 0;
 		int write = 0;
 		for (int i = 0; i < blockList.size(); i = i + 2) {
-			String currentMergeFile = Constants.BLOCK_PATH + itertion + "-Block-" + i + "_" + (i + 1);
-			System.out.println(currentMergeFile);
+			currentMergeFile = Constants.BLOCK_PATH + itertion + "-Block-" + i + "_" + (i + 1);
 			try {
 				BufferedReader br1 = new BufferedReader(new FileReader(blockList.get(i)));
 				BufferedReader br2 = null;
@@ -73,7 +82,6 @@ public class PhaseTwo {
 								record2 = null;
 							}
 						} else {
-
 							if (record1 != null) {
 								bw.write(record1);
 								++write;
@@ -120,6 +128,7 @@ public class PhaseTwo {
 			itertion++;
 			return mergeSort(mergedFiles);
 		} else {
+			System.out.println("Current Output FIle : "  + currentMergeFile);
 			return new Long(time).toString();
 		}
 	}

@@ -14,4 +14,5 @@ public class Constants {
 	public static final String INPUT_FILE2 = "sample2.txt";
 	public static final String T1 = "T1";
 	public static final String T2 = "T2";
+
 }
