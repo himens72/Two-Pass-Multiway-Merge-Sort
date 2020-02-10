@@ -6,54 +6,50 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PhaseTwo {
 	static long time = 0;
 	static int itertion = 0;
 
-	public static String mergeSort(ArrayList<String> sublist) {
+	public static String mergeSort(List<String> blockList) {
 		long itertionStart = System.currentTimeMillis();
 		ArrayList<String> mergedFiles = new ArrayList<String>();
 		System.lineSeparator();
-		int read1 = 0;
-		int read2 = 0;
+		int tupleCount1 = 0;
+		int tupleCount2 = 0;
 		int write = 0;
-		for (int k = 0; k < sublist.size(); k = k + 2) {
-			String list12 = System.getProperty("user.dir") + System.getProperty("file.separator") + "blocks"
-					+ System.getProperty("file.separator") + itertion + "-sublist-" + k + "_" + (k + 1);
-			System.out.println(list12);
+		for (int i = 0; i < blockList.size(); i = i + 2) {
+			String currentMergeFile = Constants.BLOCK_PATH + itertion + "-Block-" + i + "_" + (i + 1);
+			System.out.println(currentMergeFile);
 			try {
-				BufferedReader out1 = new BufferedReader(new FileReader(sublist.get(k)));
-				BufferedReader out2 = null;
+				BufferedReader br1 = new BufferedReader(new FileReader(blockList.get(i)));
+				BufferedReader br2 = null;
 
-				if (k + 1 < sublist.size())
-					out2 = new BufferedReader(new FileReader(sublist.get(k + 1)));
+				if (i + 1 < blockList.size())
+					br2 = new BufferedReader(new FileReader(blockList.get(i + 1)));
 
-				BufferedWriter bw = new BufferedWriter(new FileWriter(list12));
+				BufferedWriter bw = new BufferedWriter(new FileWriter(currentMergeFile));
 
 				String record1 = null;
 				String record2 = null;
-				if (out2 != null) {
+				if (br2 != null) {
 					while (true) {
-
 						if (record1 == null) {
-							record1 = out1.readLine();
-							if (read1 == Constants.MAX_RECORD && record1 != null) {
+							record1 = br1.readLine();
+							if (tupleCount1 == Constants.MAX_RECORD && record1 != null) {
 								++PhaseOne.inputCount;
-								read1 = 0;
+								tupleCount1 = 0;
 							}
-
-							++read1;
-
+							++tupleCount1;
 						}
 						if (record2 == null) {
-							record2 = out2.readLine();
-							if (read2 == Constants.MAX_RECORD && record2 != null) {
+							record2 = br2.readLine();
+							if (tupleCount2 == Constants.MAX_RECORD && record2 != null) {
 								++PhaseOne.outputCount;
-								read1 = 0;
+								tupleCount1 = 0;
 							}
-
-							++read1;
+							++tupleCount1;
 						}
 
 						if (record1 == null && record2 == null)
@@ -88,17 +84,14 @@ public class PhaseTwo {
 								record2 = null;
 							}
 						}
-
 						if (write == Constants.MAX_RECORD) {
 							++PhaseOne.outputCount;
 							write = 0;
 						}
 						bw.newLine();
-
 					}
 				} else {
-
-					while ((record1 = out1.readLine()) != null) {
+					while ((record1 = br1.readLine()) != null) {
 						bw.write(record1);
 						++write;
 						if (write == Constants.MAX_RECORD) {
@@ -108,12 +101,9 @@ public class PhaseTwo {
 						bw.newLine();
 					}
 				}
-
 				bw.close();
-
-				mergedFiles.add(list12);
-
-				out1.close();
+				mergedFiles.add(currentMergeFile);
+				br1.close();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -122,7 +112,7 @@ public class PhaseTwo {
 		System.out.println("iteration " + itertion + " in phase 2 merging time taken for this iteration is "
 				+ (System.currentTimeMillis() - itertionStart) + "ms" + "(" + "~approx "
 				+ (System.currentTimeMillis() - itertionStart) / 1000.0 + "sec)");
-		for (String f : sublist) {
+		for (String f : blockList) {
 			File buff = new File(f);
 			boolean b = buff.delete();
 		}
