@@ -8,61 +8,20 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 public class PhaseOne {
+	QuickSort quickSort = new QuickSort();
 	static int inputCount = 0;
-	public int getInputCount() {
-		return inputCount;
-	}
-
-	public void setInputCount(int inputCount) {
-		PhaseOne.inputCount = inputCount;
-	}
-
 	static int outputCount = 0;
 	static int recordCount;
-	public int getRecordCount() {
-		return recordCount;
-	}
-
-	public static void setRecordCount(int recordCount) {
-		PhaseOne.recordCount = recordCount;
-	}
-
 	static int blockCount;
 	File buffer = null;
 	long sortTime = 0;
-	int currentBlock  = 0;
-	public static int getBlockCount() {
-		return blockCount;
-	}
-
-	public static void setBlockCount(int blockCount) {
-		PhaseOne.blockCount = blockCount;
-	}
-
+	int currentBlock = 0;
 	BufferedReader br;
-	
-	public int getOutputCount() {
-		return outputCount;
-	}
-
-	public void setOutputCount(int outputCount) {
-		PhaseOne.outputCount = outputCount;
-	}
-
-	public int getCurrentBlock() {
-		return currentBlock;
-	}
-
-	public void setCurrentBlock(int currentBlock) {
-		this.currentBlock = currentBlock;
-	}
 
 	public ArrayList<String> sortTuple(String tuple, String path) {
-		if(tuple.equals("T2"))
+		if (tuple.equals("T2"))
 			currentBlock++;
 		int data_count = 0;
 		ArrayList<String> temp = new ArrayList<>();
@@ -84,19 +43,24 @@ public class PhaseOne {
 						++outputCount;
 					}
 				}
-				Collections.sort(subList, new Comparator<String>() {
-					public int compare(String o1, String o2) {
-						return o1.substring(0, 18).compareTo(o2.substring(0, 18));
-					}
-				});
-				
-				String outputFile = Constants.BLOCK_PATH+ "/Block-" + currentBlock;
-				BufferedWriter out = new BufferedWriter(new FileWriter(outputFile));
-				for (String s : subList) {
-					out.write(s);
-					out.newLine();
+				/*
+				 * Collections.sort(subList, new Comparator<String>() { public int
+				 * compare(String o1, String o2) { return o1.substring(0,
+				 * 18).compareTo(o2.substring(0, 18)); } });
+				 */
+				subList = quickSort.executeQuickSort(subList);
+
+				String outputFile = Constants.BLOCK_PATH + "/Block-" + currentBlock;
+
+				BufferedWriter write = new BufferedWriter(new FileWriter(outputFile));
+				for (int i = 0; i < subList.size(); i++) {
+					write.write(subList.get(i));
+					write.newLine();
 				}
-				out.close();			
+				/*
+				 * for (String s : subList) { out.write(s); out.newLine(); }
+				 */
+				write.close();
 				temp.add(outputFile);
 
 				if (record == null)
@@ -116,4 +80,45 @@ public class PhaseOne {
 		}
 		return temp;
 	}
+
+	public int getInputCount() {
+		return inputCount;
+	}
+
+	public void setInputCount(int inputCount) {
+		PhaseOne.inputCount = inputCount;
+	}
+
+	public int getRecordCount() {
+		return recordCount;
+	}
+
+	public static void setRecordCount(int recordCount) {
+		PhaseOne.recordCount = recordCount;
+	}
+
+	public static int getBlockCount() {
+		return blockCount;
+	}
+
+	public static void setBlockCount(int blockCount) {
+		PhaseOne.blockCount = blockCount;
+	}
+
+	public int getOutputCount() {
+		return outputCount;
+	}
+
+	public void setOutputCount(int outputCount) {
+		PhaseOne.outputCount = outputCount;
+	}
+
+	public int getCurrentBlock() {
+		return currentBlock;
+	}
+
+	public void setCurrentBlock(int currentBlock) {
+		this.currentBlock = currentBlock;
+	}
+
 }

@@ -1,7 +1,6 @@
 package com.two.pass.multiway.mergesort;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,5 +32,6 @@ public class UniqueChar {
 		System.out.println(count3);
 		System.out.println(count4);
 		System.out.println(temp.size());
+		br.close();
 	}
 }

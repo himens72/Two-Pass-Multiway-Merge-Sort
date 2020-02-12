@@ -1,6 +1,10 @@
 package com.two.pass.multiway.mergesort;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
 
 public class ProgramController {
@@ -8,7 +12,12 @@ public class ProgramController {
 	static String fileName2 = Constants.INPUT_PATH + Constants.INPUT_FILE2;
 
 	public static void main(String[] args) throws InterruptedException {
-		cleanDirectory();
+		System.out
+		.println("****************************Cleaning Directory*********************************************");
+		buildBlockDirectory();
+		buildOutputDirectory();
+		System.out.println("Diretory Cleaned");
+		System.out.println("****************************TPMMS Console*********************************************");
 		System.out.println("Memory Size :  " + getMemorySize());
 		PhaseOne tpmms = new PhaseOne();
 		List<String> T1 = tpmms.sortTuple("T1", fileName1);
@@ -27,19 +36,54 @@ public class ProgramController {
 		System.out.println("Output blocks : " + tpmms.getOutputCount());
 		System.out.println(
 				"Total no of input and output block for sorting" + (tpmms.getInputCount() + tpmms.getOutputCount()));
-
+		buildOutputDirectory(phaseTwo.getOutputPath());
+		buildBlockDirectory();
 	}
 
-	public static void cleanDirectory() {
-		System.out
-				.println("****************************Cleaning Directory*********************************************");
+	private static void buildOutputDirectory(String outputPath) {
+		try {
+			File outputDir = new File(Constants.OUTPUT_PATH);
+			if (!outputDir.exists()) {
+				System.out.println("Output Directory Created : " + outputDir.mkdir());
+			}
+			BufferedReader br = new BufferedReader(new FileReader(outputPath));
+			FileWriter writer = new FileWriter(Constants.OUTPUT_PATH + "output.txt", true);
+			String temp;
+
+			while ((temp = br.readLine()) != null) {
+				writer.write(temp + "\n");
+				writer.flush();
+			}
+			br.close();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void buildOutputDirectory() {
+		File outputDir = new File(Constants.OUTPUT_PATH);
+		if (!outputDir.exists()) {
+			System.out.println("Output Directory Created : " + outputDir.mkdir());
+		} else if (outputDir.isFile()) {
+		} else {
+			String fileList[] = outputDir.list();
+			for (int i = 0; i < fileList.length; i++) {
+				if (fileList[i].trim().length() >= 1) {
+					File currentBlockFiles = new File(outputDir.getPath(), fileList[i]);
+					currentBlockFiles.delete();
+				}
+			}
+			System.out.println("Output Directory Deleted :- " + outputDir.delete());
+			System.out.println("Output Directory Created :- " + outputDir.mkdir());
+		}
+	}
+
+	public static void buildBlockDirectory() {
 		File deleteBlocks = new File(Constants.BLOCK_PATH);
 		if (!deleteBlocks.exists()) {
 			System.out.println("Block Directory Created : " + deleteBlocks.mkdir());
-
 		} else if (deleteBlocks.isFile()) {
-			System.out.println("Output Directory Deleted : " + deleteBlocks.delete());
-			System.out.println("Output Directory Created : " + deleteBlocks.mkdir());
 		} else {
 			String fileList[] = deleteBlocks.list();
 			for (int i = 0; i < fileList.length; i++) {
@@ -48,16 +92,9 @@ public class ProgramController {
 					currentBlockFiles.delete();
 				}
 			}
-			System.out.println("Output Directory Deleted :- " + deleteBlocks.delete());
-			System.out.println("Output Directory Created :- " + deleteBlocks.mkdir());
+			System.out.println("Block Directory Deleted :- " + deleteBlocks.delete());
+			System.out.println("Block Directory Created :- " + deleteBlocks.mkdir());
 		}
-		File deleteOutput = new File(Constants.OUTPUT_PATH);
-		if (deleteOutput.exists()) {
-			System.out.println("Output Directory Deleted : " + deleteOutput.delete());
-			System.out.println("Output Directory Created : " + deleteOutput.mkdir());
-		}
-		System.out.println("Diretory Cleaned");
-		System.out.println("****************************TPMMS Console*********************************************");
 	}
 
 	private static int getMemorySize() {

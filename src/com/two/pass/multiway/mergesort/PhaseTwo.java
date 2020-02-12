@@ -8,22 +8,17 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
-
 public class PhaseTwo {
 	static long time = 0;
 	static int itertion = 0;
 	static String currentMergeFile = "";
 	static List<String> listOfFiles;
+	static String outputPath = "";
 
 	public PhaseTwo(List<String> T1, List<String> T2) {
 		listOfFiles = new ArrayList<>();
 		listOfFiles.addAll(T1);
 		listOfFiles.addAll(T2);
-	}
-
-	public String performMergeSort() {
-		return mergeSort(listOfFiles);
 	}
 
 	public static String mergeSort(List<String> blockList) {
@@ -33,7 +28,7 @@ public class PhaseTwo {
 		int tupleCount1 = 1;
 		int tupleCount2 = 1;
 		int write = 1;
-		System.out.println("BLOCK SIZE + " +blockList.size());
+		System.out.println("BLOCK SIZE + " + blockList.size());
 		for (int i = 0; i < blockList.size(); i = i + 2) {
 			currentMergeFile = Constants.BLOCK_PATH + itertion + "-Block-" + i + "_" + (i + 1);
 			try {
@@ -59,7 +54,6 @@ public class PhaseTwo {
 						if (tuple1 == null && tuple2 == null) {
 							break;
 						}
-//						System.out.println(i+ "------->" +currentTuple);
 						if (tuple1 != null && tuple2 != null) {
 							if (currentTuple.trim().length() > 0) {
 								String id1 = tuple1.substring(0, 8);
@@ -68,40 +62,36 @@ public class PhaseTwo {
 								String date2 = tuple2.substring(8, 18);
 								if (id1.equals(id2)) {
 									if (currentTuple.substring(0, 8).equals(id1)) {
-										if (date1.compareToIgnoreCase(date2) > 0) { // Condition is true when date1 is
-											// latest
+										if (date1.compareToIgnoreCase(date2) > 0) {
 											if (tuple1.substring(8, 18)
 													.compareToIgnoreCase(currentTuple.substring(8, 18)) > 0) {
 												currentTuple = tuple1;
 											}
 
-										} else if (date1.compareToIgnoreCase(date2) < 0) { // Condition is true when
+										} else if (date1.compareToIgnoreCase(date2) < 0) {
 											if (tuple2.substring(8, 18)
 													.compareToIgnoreCase(currentTuple.substring(8, 18)) > 0) {
 												currentTuple = tuple2;
 											}
-										} else { // Condition is true when date1 and date 2 is same
+										} else {
 											currentTuple = tuple1;
 										}
 										tuple1 = null;
 										tuple2 = null;
 									} else {
-										//Systen.out.println(currentTuple);
 										bw.write(currentTuple);
 										bw.newLine();
-										if (date1.compareToIgnoreCase(date2) > 0) { // Condition is true when date1 is
-											// latest
+										write++;
+										if (date1.compareToIgnoreCase(date2) > 0) {
 											currentTuple = tuple1;
-										} else if (date1.compareToIgnoreCase(date2) < 0) { // Condition is true when
-											// date2
-											// is latest
+										} else if (date1.compareToIgnoreCase(date2) < 0) {
 											currentTuple = tuple2;
-										} else { // Condition is true when date1 and date 2 is same
+										} else {
 											currentTuple = tuple1;
 										}
 										tuple1 = null;
 										tuple2 = null;
-										write++;
+
 									}
 								} else {
 									String currentId = currentTuple.substring(0, 8);
@@ -117,9 +107,9 @@ public class PhaseTwo {
 										}
 										tuple2 = null;
 									} else {
-										//Systen.out.println(currentTuple);
 										bw.write(currentTuple);
 										bw.newLine();
+										write++;
 										if (tuple1.substring(0, 18).compareToIgnoreCase(tuple2.substring(0, 18)) > 0) {
 											currentTuple = tuple2;
 											tuple2 = null;
@@ -136,18 +126,11 @@ public class PhaseTwo {
 								String id2 = tuple2.substring(0, 8);
 								String date2 = tuple2.substring(8, 18);
 								if (id1.equals(id2)) {
-									if (date1.compareToIgnoreCase(date2) > 0) { // Condition is true when date1 is
-										// latest
-										//if (tuple1.substring(0, 18).compareToIgnoreCase(currentTuple.substring(0, 18)) > 0) {
-											currentTuple = tuple1;
-										//}
-									} else if (date1.compareToIgnoreCase(date2) < 0) { // Condition is true when date2
-										// is
-										// latest
-										//if (tuple2.substring(0, 18).compareToIgnoreCase(currentTuple.substring(0, 18)) > 0) {
-											currentTuple = tuple2;
-										//}
-									} else { // Condition is true when date1 and date 2 is same
+									if (date1.compareToIgnoreCase(date2) > 0) {
+										currentTuple = tuple1;
+									} else if (date1.compareToIgnoreCase(date2) < 0) {
+										currentTuple = tuple2;
+									} else {
 										currentTuple = tuple1;
 									}
 									tuple1 = null;
@@ -166,58 +149,57 @@ public class PhaseTwo {
 							}
 						} else {
 							if (tuple1 != null) {
-								if(currentTuple.trim().length() > 0) {
+								if (currentTuple.trim().length() > 0) {
 									if (currentTuple.substring(0, 8).equals(tuple1.substring(0, 8))) {
-										if (tuple1.substring(0, 18).compareToIgnoreCase(currentTuple.substring(0, 18)) > 0) {
+										if (tuple1.substring(0, 18)
+												.compareToIgnoreCase(currentTuple.substring(0, 18)) > 0) {
 											currentTuple = tuple1;
 										}
 										tuple1 = null;
 									} else {
-										//Systen.out.println("****> " +currentTuple);
 										bw.write(currentTuple);
 										bw.newLine();
 										++write;
 										currentTuple = tuple1;
 										tuple1 = null;
-									}	
+									}
 								} else {
 									currentTuple = tuple1;
 									tuple1 = null;
 								}
-								
-							} else  {
-								if(currentTuple.trim().length() > 0) {
+
+							} else {
+								if (currentTuple.trim().length() > 0) {
 									if (currentTuple.substring(0, 8).equals(tuple2.substring(0, 8))) {
-										if (tuple2.substring(0, 18).compareToIgnoreCase(currentTuple.substring(0, 18)) > 0) {
+										if (tuple2.substring(0, 18)
+												.compareToIgnoreCase(currentTuple.substring(0, 18)) > 0) {
 											currentTuple = tuple2;
 										}
 										tuple2 = null;
 									} else {
-										//Systen.out.println("--> " +currentTuple);
 										bw.write(currentTuple);
 										bw.newLine();
 										++write;
 										currentTuple = tuple2;
 										tuple2 = null;
-									}	
+									}
 								} else {
 									currentTuple = tuple2;
 									tuple2 = null;
 								}
-								
+
 							}
 						}
 
 					}
 				} else {
 					while ((tuple1 = br1.readLine()) != null) {
-						if(currentTuple.trim().length() > 0) {
+						if (currentTuple.trim().length() > 0) {
 							if (currentTuple.substring(0, 8).equals(tuple1.substring(0, 8))) {
 								if (tuple1.substring(0, 18).compareToIgnoreCase(currentTuple.substring(0, 18)) > 0) {
 									currentTuple = tuple1;
 								}
 							} else {
-								//Systen.out.println(currentTuple);
 								bw.write(currentTuple);
 								bw.newLine();
 								++write;
@@ -226,10 +208,8 @@ public class PhaseTwo {
 						} else {
 							currentTuple = tuple1;
 						}
-					}	
+					}
 				}
-				//Systen.out.println("End " + currentTuple);
-				//Systen.out.println("--------------------->");
 				bw.write(currentTuple);
 				bw.close();
 				mergedFiles.add(currentMergeFile);
@@ -239,9 +219,9 @@ public class PhaseTwo {
 			}
 		}
 		time = time + (System.currentTimeMillis() - itertionStart);
-		System.out.println("iteration " + itertion + " in phase 2 merging time taken for this iteration is "
-				+ (System.currentTimeMillis() - itertionStart) + "ms" + "(" + "~approx "
-				+ (System.currentTimeMillis() - itertionStart) / 1000.0 + "sec)");
+		System.out.println(
+				"Phase 2 merging time iteration  " + itertion + " : " + (System.currentTimeMillis() - itertionStart)
+				+ "ms" + "(" + "~approx " + (System.currentTimeMillis() - itertionStart) / 1000.0 + "sec)");
 		for (String f : blockList) {
 			File buff = new File(f);
 			boolean b = buff.delete();
@@ -250,8 +230,21 @@ public class PhaseTwo {
 			itertion++;
 			return mergeSort(mergedFiles);
 		} else {
-			System.out.println("Current Output FIle : " + currentMergeFile);
+			setOutputPath(currentMergeFile);
 			return new Long(time).toString();
 		}
 	}
+
+	public String getOutputPath() {
+		return outputPath;
+	}
+
+	public static void setOutputPath(String outputPath) {
+		PhaseTwo.outputPath = outputPath;
+	}
+
+	public String performMergeSort() {
+		return mergeSort(listOfFiles);
+	}
+
 }
