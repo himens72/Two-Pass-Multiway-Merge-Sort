@@ -13,7 +13,7 @@ public class ProgramController {
 
 	public static void main(String[] args) throws InterruptedException {
 		System.out
-		.println("****************************Cleaning Directory*********************************************");
+				.println("****************************Cleaning Directory*********************************************");
 		buildBlockDirectory();
 		buildOutputDirectory();
 		System.out.println("Diretory Cleaned");
@@ -28,14 +28,10 @@ public class ProgramController {
 		System.out.println("Block Used :  " + tpmms.currentBlock);
 		System.out.println("Sorting Time for T1 and T2 : " + tpmms.sortTime / 1000.0 + " seconds approx");
 		System.out.println("Sorting Time for T1 and T2 is " + tpmms.sortTime + " ms");
-		System.out.println("Phase 2 Time : " + time + "ms" + "(" + "~approx" + time / 1000.0 + "sec)");
-		System.out.println("Total time Phase 1 & Phase 2 : " + (time + tpmms.sortTime) + "ms" + "(" + "~approx "
-				+ (time + tpmms.sortTime) / 1000.0 + "sec)");
-		System.out.println("Total number of I/O's for sorting");
-		System.out.println("Input blocks : " + tpmms.getInputCount());
-		System.out.println("Output blocks : " + tpmms.getOutputCount());
-		System.out.println(
-				"Total no of input and output block for sorting" + (tpmms.getInputCount() + tpmms.getOutputCount()));
+		System.out.println("Phase 2 Time : " + time + "ms" + "(" + "~approx" + time / 1000.0 + " sec)");
+		System.out.println("Total time Phase 1 & Phase 2 : " + (time + tpmms.sortTime) + "ms");
+		System.out.println("Total time Phase 1 & Phase 2 : " + ((time + tpmms.sortTime) / 1000.0) + " sec");
+		System.out.println("Total no. of Write Operation in Phase 2 : " + phaseTwo.getWrite());
 		buildOutputDirectory(phaseTwo.getOutputPath());
 		buildBlockDirectory();
 	}

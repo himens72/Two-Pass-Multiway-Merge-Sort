@@ -2,7 +2,6 @@ package com.two.pass.multiway.mergesort;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -14,6 +13,14 @@ public class PhaseTwo {
 	static String currentMergeFile = "";
 	static List<String> listOfFiles;
 	static String outputPath = "";
+	int write = 0;
+	public int getWrite() {
+		return write;
+	}
+
+	public void setWrite(int write) {
+		this.write = write;
+	}
 
 	public PhaseTwo(List<String> T1, List<String> T2) {
 		listOfFiles = new ArrayList<>();
@@ -21,14 +28,12 @@ public class PhaseTwo {
 		listOfFiles.addAll(T2);
 	}
 
-	public static String mergeSort(List<String> blockList) {
+	public String mergeSort(List<String> blockList) {
 		long itertionStart = System.currentTimeMillis();
 		ArrayList<String> mergedFiles = new ArrayList<>();
 		System.lineSeparator();
 		int tupleCount1 = 1;
 		int tupleCount2 = 1;
-		int write = 1;
-		System.out.println("BLOCK SIZE + " + blockList.size());
 		for (int i = 0; i < blockList.size(); i = i + 2) {
 			currentMergeFile = Constants.BLOCK_PATH + itertion + "-Block-" + i + "_" + (i + 1);
 			try {
@@ -222,10 +227,7 @@ public class PhaseTwo {
 		System.out.println(
 				"Phase 2 merging time iteration  " + itertion + " : " + (System.currentTimeMillis() - itertionStart)
 				+ "ms" + "(" + "~approx " + (System.currentTimeMillis() - itertionStart) / 1000.0 + "sec)");
-		for (String f : blockList) {
-			File buff = new File(f);
-			boolean b = buff.delete();
-		}
+		
 		if (mergedFiles.size() > 1) {
 			itertion++;
 			return mergeSort(mergedFiles);
