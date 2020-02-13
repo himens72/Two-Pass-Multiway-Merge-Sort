@@ -8,7 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhaseTwo {
-	static long time = 0;
+	long mergeTtime = 0;
+	public long getMergeTtime() {
+		return mergeTtime;
+	}
+
+	public void setMergeTtime(long mergeTtime) {
+		this.mergeTtime = mergeTtime;
+	}
+
 	static int itertion = 0;
 	static String currentMergeFile = "";
 	static List<String> listOfFiles;
@@ -28,7 +36,7 @@ public class PhaseTwo {
 		listOfFiles.addAll(T2);
 	}
 
-	public String mergeSort(List<String> blockList) {
+	public void mergeSort(List<String> blockList) {
 		long itertionStart = System.currentTimeMillis();
 		ArrayList<String> mergedFiles = new ArrayList<>();
 		System.lineSeparator();
@@ -223,17 +231,16 @@ public class PhaseTwo {
 				e.printStackTrace();
 			}
 		}
-		time = time + (System.currentTimeMillis() - itertionStart);
+		mergeTtime  += (System.currentTimeMillis() - itertionStart);
 		System.out.println(
 				"Phase 2 merging time iteration  " + itertion + " : " + (System.currentTimeMillis() - itertionStart)
 				+ "ms" + "(" + "~approx " + (System.currentTimeMillis() - itertionStart) / 1000.0 + "sec)");
 		
 		if (mergedFiles.size() > 1) {
 			itertion++;
-			return mergeSort(mergedFiles);
+			mergeSort(mergedFiles);
 		} else {
 			setOutputPath(currentMergeFile);
-			return new Long(time).toString();
 		}
 	}
 
@@ -245,8 +252,8 @@ public class PhaseTwo {
 		PhaseTwo.outputPath = outputPath;
 	}
 
-	public String performMergeSort() {
-		return mergeSort(listOfFiles);
+	public void performMergeSort() {
+		mergeSort(listOfFiles);
 	}
 
 }

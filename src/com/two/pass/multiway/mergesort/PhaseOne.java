@@ -16,33 +16,45 @@ public class PhaseOne {
 	static int recordCount;
 	static int blockCount;
 	File buffer = null;
-	long sortTime = 0;
+	long sortingTime = 0;
+	public long getSortingTime() {
+		return sortingTime;
+	}
+
+	public void setSortingTime(long sortingTime) {
+		this.sortingTime = sortingTime;
+	}
+
 	int currentBlock = 0;
 	BufferedReader br;
 
 	public ArrayList<String> sortTuple(String tuple, String path) {
 		if (tuple.equals("T2"))
 			currentBlock++;
-		int data_count = 0;
+		long data_count = 0;
 		ArrayList<String> temp = new ArrayList<>();
 		long begin = System.currentTimeMillis();
 		try {
 			br = new BufferedReader(new FileReader(path));
 			boolean run = true;
+			long blockSize = (Constants.TOTAL_MEMORY / 1000); // Using 10% memory for reading data from disk
+			System.out.println(blockSize + "---->  " +(int) (Runtime.getRuntime().totalMemory()));
 			while (run) {
 				String record = null;
 				ArrayList<String> subList = new ArrayList<>();
 
-				for (int k = 0; k < Constants.MAX_RECORD && (record = br.readLine()) != null; k++) {
+				while((record = br.readLine()) != null) {
 					subList.add(record);
 					recordCount++;
 					++data_count;
-					if (data_count == Constants.MAX_RECORD) {
+					if (data_count == blockSize) {
 						data_count = 0;
 						++inputCount;
 						++outputCount;
-					}
+						break;
+					}	
 				}
+				
 				/*
 				 * Collections.sort(subList, new Comparator<String>() { public int
 				 * compare(String o1, String o2) { return o1.substring(0,
@@ -68,9 +80,9 @@ public class PhaseOne {
 				currentBlock++;
 			}
 			setBlockCount(temp.size());
-			sortTime = sortTime + (System.currentTimeMillis() - begin);
-			System.out.println("Time take to sort relation " + tuple + " is " + (System.currentTimeMillis() - begin)
-					+ "ms" + "(" + "~approx " + (System.currentTimeMillis() - begin) / 1000.0 + "sec)");
+			sortingTime += (System.currentTimeMillis() - begin);
+			System.out.println("Time taken by Phase 1 for " + tuple + " : " + (System.currentTimeMillis() - begin)
+					+ "ms ("  + (System.currentTimeMillis() - begin) / 1000.0 + "sec)");
 		} catch (FileNotFoundException e) {
 			System.out.println("The File doesn't Exist : " + path);
 			System.exit(1);
