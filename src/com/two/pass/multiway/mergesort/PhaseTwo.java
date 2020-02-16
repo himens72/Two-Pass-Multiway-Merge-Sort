@@ -9,6 +9,23 @@ import java.util.List;
 
 public class PhaseTwo {
 	long mergeTtime = 0;
+	int readCount = 0;
+	public int getReadCount() {
+		return readCount;
+	}
+
+	public void setReadCount(int readCount) {
+		this.readCount = readCount;
+	}
+
+	public int getWriteCount() {
+		return WriteCount;
+	}
+
+	public void setWriteCount(int writeCount) {
+		WriteCount = writeCount;
+	}
+	int WriteCount = 0;
 	public long getMergeTtime() {
 		return mergeTtime;
 	}
@@ -16,7 +33,24 @@ public class PhaseTwo {
 	public void setMergeTtime(long mergeTtime) {
 		this.mergeTtime = mergeTtime;
 	}
+	int tupleCount1 = 1;
+	public int getTupleCount1() {
+		return tupleCount1;
+	}
 
+	public void setTupleCount1(int tupleCount1) {
+		this.tupleCount1 = tupleCount1;
+	}
+
+	public int getTupleCount2() {
+		return tupleCount2;
+	}
+
+	public void setTupleCount2(int tupleCount2) {
+		this.tupleCount2 = tupleCount2;
+	}
+	int tupleCount2 = 1;
+	
 	static int itertion = 0;
 	static String currentMergeFile = "";
 	static List<String> listOfFiles;
@@ -40,8 +74,6 @@ public class PhaseTwo {
 		long itertionStart = System.currentTimeMillis();
 		ArrayList<String> mergedFiles = new ArrayList<>();
 		System.lineSeparator();
-		int tupleCount1 = 1;
-		int tupleCount2 = 1;
 		for (int i = 0; i < blockList.size(); i = i + 2) {
 			currentMergeFile = Constants.BLOCK_PATH + itertion + "-Block-" + i + "_" + (i + 1);
 			try {
@@ -59,10 +91,18 @@ public class PhaseTwo {
 						if (tuple1 == null) {
 							tuple1 = br1.readLine();
 							tupleCount1++;
+							if(tupleCount1 == 40) {
+								++readCount;
+								tupleCount1 = 0;
+							}
 						}
 						if (tuple2 == null) {
 							tuple2 = br2.readLine();
 							tupleCount2++;
+							if(tupleCount2 == 40) {
+								++readCount;
+								tupleCount2 = 0;
+							}
 						}
 						if (tuple1 == null && tuple2 == null) {
 							break;
@@ -95,6 +135,10 @@ public class PhaseTwo {
 										bw.write(currentTuple);
 										bw.newLine();
 										write++;
+										if(write == 40) {
+											++WriteCount;
+											write = 0;
+										}
 										if (date1.compareToIgnoreCase(date2) > 0) {
 											currentTuple = tuple1;
 										} else if (date1.compareToIgnoreCase(date2) < 0) {
@@ -123,6 +167,10 @@ public class PhaseTwo {
 										bw.write(currentTuple);
 										bw.newLine();
 										write++;
+										if(write == 40) {
+											++WriteCount;
+											write = 0;
+										}
 										if (tuple1.substring(0, 18).compareToIgnoreCase(tuple2.substring(0, 18)) > 0) {
 											currentTuple = tuple2;
 											tuple2 = null;
@@ -173,6 +221,10 @@ public class PhaseTwo {
 										bw.write(currentTuple);
 										bw.newLine();
 										++write;
+										if(write == 40) {
+											++WriteCount;
+											write = 0;
+										}
 										currentTuple = tuple1;
 										tuple1 = null;
 									}
@@ -193,6 +245,10 @@ public class PhaseTwo {
 										bw.write(currentTuple);
 										bw.newLine();
 										++write;
+										if(write == 40) {
+											++WriteCount;
+											write = 0;
+										}
 										currentTuple = tuple2;
 										tuple2 = null;
 									}
@@ -216,6 +272,10 @@ public class PhaseTwo {
 								bw.write(currentTuple);
 								bw.newLine();
 								++write;
+								if(write == 40) {
+									++WriteCount;
+									write = 0;
+								}
 								currentTuple = tuple1;
 							}
 						} else {

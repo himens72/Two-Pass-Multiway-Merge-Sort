@@ -13,29 +13,46 @@ public class ProgramController {
 
 	public static void main(String[] args) throws InterruptedException {
 		System.out
-				.println("****************************Cleaning Directory*********************************************");
+		.println("****************************Cleaning Directory*********************************************");
 		buildBlockDirectory();
 		buildOutputDirectory();
 		System.out.println("Diretory Cleaned");
 		System.out.println("****************************TPMMS Console*********************************************");
 		System.gc();
 		System.out.println("Memory Size :  " + getMemorySize());
+		System.out.println("Tuple Size : " + Constants.TUPLE_SIZE);
 		PhaseOne phaseOne = new PhaseOne();
+		System.out.println("****************************Phase 1 for T1*********************************************");
 		List<String> T1 = phaseOne.sortTuple("T1", fileName1);
+		int recordCount1 = phaseOne.getRecordCount();
+		System.out.println("Records in T1 : " + recordCount1);
+		System.out.println("Block for T1 : " + (recordCount1 * Constants.TUPLE_SIZE) / Constants.BLOCK_SIZE);
+		System.out.println("****************************Phase 1 for T2*********************************************");
 		List<String> T2 = phaseOne.sortTuple("T2", fileName2);
+		int recordCount2 = phaseOne.getRecordCount() - recordCount1;
+		System.out.println("Records in T2 : " + recordCount2);
+		System.out.println("Block for T2 : " + (recordCount2 * Constants.TUPLE_SIZE) / Constants.BLOCK_SIZE);
+		System.out.println("****************************Phase 1 Overview*********************************************");
+		System.out.println("Total number of records " + phaseOne.getRecordCount());
+		System.out.println("Total number of Block " + (phaseOne.getRecordCount() * Constants.TUPLE_SIZE) / Constants.BLOCK_SIZE);
+		int phaseOneDiskIO = (2 * phaseOne.getRecordCount() * Constants.TUPLE_SIZE) / Constants.BLOCK_SIZE;
+		System.out.println("Sorted Disk IO " + phaseOneDiskIO);
 		System.gc();
+		System.out.println("****************************Phase 2*********************************************");
 		PhaseTwo phaseTwo = new PhaseTwo(T1, T2);
 		phaseTwo.performMergeSort();
-		System.out.println("Total number of records " + phaseOne.getRecordCount());
-		System.out.println("Block Used :  " + phaseOne.currentBlock);
-		System.out.println("Sorting Time for T1 and T2 : " + phaseOne.getSortingTime() / 1000.0 + " seconds approx");
-		System.out.println("Sorting Time for T1 and T2 is " + phaseOne.getSortingTime() + " ms");
-		System.out.println("Phase 2 Time : " + phaseTwo.getMergeTtime() + "ms" + "(" + "~approx" + phaseTwo.getMergeTtime() / 1000.0 + " sec)");
-		System.out.println("Total time Phase 1 & Phase 2 : " + (phaseTwo.getMergeTtime() + phaseOne.getSortingTime()) + "ms");
-		System.out.println("Total time Phase 1 & Phase 2 : " + ((phaseTwo.getMergeTtime() + phaseOne.getSortingTime()) / 1000.0) + " sec");
+		System.out.println("Phase 2 Time : " + phaseTwo.getMergeTtime() + "ms" + " ("
+				+ phaseTwo.getMergeTtime() / 1000.0 + " sec)");
+		System.out.println("Total Number of I/O :" + phaseTwo.getTupleCount1() + phaseTwo.getTupleCount2());
+		System.out.println("****************************Output Overview*********************************************");
+		System.out.println(phaseTwo.getReadCount() + phaseTwo.getWriteCount());
+		System.out.println(
+				"Total time Phase 1 & Phase 2 : " + (phaseTwo.getMergeTtime() + phaseOne.getSortingTime()) + "ms");
+		System.out.println("Total time Phase 1 & Phase 2 : "
+				+ ((phaseTwo.getMergeTtime() + phaseOne.getSortingTime()) / 1000.0) + " sec");
 		System.out.println("Total no. of Write Operation in Phase 2 : " + phaseTwo.getWrite());
 		buildOutputDirectory(phaseTwo.getOutputPath());
-		buildBlockDirectory();
+		// buildBlockDirectory();
 	}
 
 	private static void buildOutputDirectory(String outputPath) {

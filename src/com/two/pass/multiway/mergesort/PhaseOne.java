@@ -38,7 +38,6 @@ public class PhaseOne {
 			br = new BufferedReader(new FileReader(path));
 			boolean run = true;
 			long blockSize = (Constants.TOTAL_MEMORY / 1000); // Using 10% memory for reading data from disk
-			System.out.println(blockSize + "---->  " +(int) (Runtime.getRuntime().totalMemory()));
 			while (run) {
 				String record = null;
 				ArrayList<String> subList = new ArrayList<>();
@@ -54,12 +53,6 @@ public class PhaseOne {
 						break;
 					}	
 				}
-				
-				/*
-				 * Collections.sort(subList, new Comparator<String>() { public int
-				 * compare(String o1, String o2) { return o1.substring(0,
-				 * 18).compareTo(o2.substring(0, 18)); } });
-				 */
 				subList = quickSort.executeQuickSort(subList);
 
 				String outputFile = Constants.BLOCK_PATH + "/Block-" + currentBlock;
@@ -69,9 +62,6 @@ public class PhaseOne {
 					write.write(subList.get(i));
 					write.newLine();
 				}
-				/*
-				 * for (String s : subList) { out.write(s); out.newLine(); }
-				 */
 				write.close();
 				temp.add(outputFile);
 
